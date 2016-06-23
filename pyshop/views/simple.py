@@ -260,14 +260,16 @@ class Show(View):
         api = pypi.proxy
 
         search_result = api.search({'name': package_name})
+        search_result += api.search({'name': package_name.replace('-', '.')})
         search_count = len(search_result)
         if not search_count:
             return None
 
-        package_name = package_name.lower().replace('-', '_')
+        package_name = package_name.lower().replace('-', '_').replace('.', '_')
         search_result = [p for p in search_result
                          if p['name'].lower() == package_name
                          or p['name'].lower().replace('-', '_') == package_name
+                         or p['name'].lower().replace('.', '_') == package_name
                          ]
         log.debug('Found {sc}, matched {mc}'.format(sc=search_count,
                                                     mc=len(search_result)))
